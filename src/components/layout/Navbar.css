@@ -1,0 +1,11 @@
+a.headerNavLink{
+    color:white;
+    text-decoration: none;
+    display: inline-block;
+    padding:5px 10px;
+}
+a.headerNavLinkActive{
+    text-decoration: none;
+    background-color: #6F80DA;
+    border-radius: 5px;
+}
