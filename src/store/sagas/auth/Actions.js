@@ -23,7 +23,7 @@ export function* logout() {
 export function* checkAuth() {
     try {
         const isAuth = yield call(authApi.getUserLoggedIn);
-        yield put({type: types.AUTHENTICATED, auth: isAuth});
+        yield put({type: types.AUTHENTICATED, auth: isAuth!==0});
     } catch (error) {
         yield put({type:types.AUTHENTICATED, auth: false});
     }

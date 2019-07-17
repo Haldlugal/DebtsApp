@@ -21,7 +21,6 @@ class AuthApi {
 
         return AuthApi.getToken()
         .then(() => {
-            console.log("sign");
             return fetch('http://drupal7/api/user/login', {
                 method: 'POST',
                 credentials: 'include',
@@ -32,9 +31,10 @@ class AuthApi {
                 body: JSON.stringify(body)
             })
             .then(response => {
-                console.log(response.statusText);
                 if(response.status === 200) {
                     return response.json();
+                } else if (response.status === 406) {
+                    return response.json()
                 }
                 else {
                     document.cookie = "id=0";
@@ -70,17 +70,24 @@ class AuthApi {
     }
 
     static getUserLoggedIn() {
-        return fetch('http://drupal7/api/user/'+getCookie("id"), {
+        return fetch('http://drupal7/api/current_user/', {
             method: 'GET',
             credentials: 'include',
+            mode: 'cors',
             headers: {
                 'content-type': 'application/json',
                 'Accept': 'application/json'
             }
         })
         .then(response => {
-            return response.status === 200;
+            if (response.status === 200) {
+                return response.json();
+            } else throw(Error());
         })
+        .catch(error=>{
+            throw error;
+        });
+
     }
 
     static signUpUser(userInfo) {

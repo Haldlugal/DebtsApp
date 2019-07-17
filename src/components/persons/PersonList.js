@@ -20,6 +20,7 @@ const PersonList = () => {
 
     const dispatch = useDispatch();
     const persons = useSelector(state => state.persons.persons);
+
     useEffect(()=>{
         dispatch({type: types.GET_PERSONS_REQUEST});
     }, []);

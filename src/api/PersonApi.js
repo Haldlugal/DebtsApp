@@ -1,4 +1,20 @@
 class PersonApi {
+
+    static fetchAllPersons() {
+        return fetch('http://drupal7/api/persons_api', {
+            method: 'GET',
+            mode: 'cors',
+            credentials: 'include',
+            headers: {
+                'Accept': 'application/json'
+            }
+        })
+            .then(response => {
+                return response.json();
+            });
+    }
+
+
     static fetchPersons() {
         return fetch('http://drupal7/api/persons_api', {
             method: 'GET',
@@ -9,7 +25,8 @@ class PersonApi {
             }
         })
         .then(response => {
-            return response.json();});
+            return response.json();
+        });
     }
 
     static fetchSinglePerson(id) {
@@ -89,6 +106,8 @@ class PersonApi {
     static deletePerson(person) {
         return fetch('http://drupal7/api/terms/'+person.id, {
             method: 'DELETE',
+            mode: 'cors',
+            credentials: 'include',
             headers: {
                 'Accept': 'application/json'
             }
