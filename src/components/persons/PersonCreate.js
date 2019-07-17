@@ -1,9 +1,9 @@
-import React, {useState, useEffect, useReducer} from 'react';
+import React, {useState, useEffect} from 'react';
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import {useDispatch, useSelector, useStore} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import * as types from "../../store/sagas/persons/ActionTypes";
 import {Redirect} from "react-router-dom";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -34,7 +34,6 @@ const useStyles = makeStyles(theme => ({
 
 
 const PersonCreate = (props) => {
-
     const id =  props.match.params.id;
     const isExistingPerson = typeof id !== 'undefined';
 
@@ -59,7 +58,6 @@ const PersonCreate = (props) => {
             message: 'Second Name'
         }
     });
-
 
     useEffect(()=>{
         dispatch({type: types.GET_PERSON_REQUEST, payload: {id: id}});
@@ -86,18 +84,19 @@ const PersonCreate = (props) => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
+
         let firstNameField = {};
         let secondNameField = {};
         let error = false;
 
-        if (person.firstName===''){
+        if (person.firstName==='' || person.firstName===undefined){
             firstNameField = {errorStatus:true, message: 'This field is required'};
             error = true;
         } else {
             firstNameField = {errorStatus:false, message: 'First Name'};
         }
 
-        if (person.secondName===''){
+        if (person.secondName==='' || person.secondName===undefined){
             error = true;
             secondNameField = {errorStatus:true, message: 'This field is required'};
         } else {
@@ -151,7 +150,7 @@ const PersonCreate = (props) => {
                 value={person.firstName}
                 onChange={handleChange}
                 fullWidth
-                required = {true}
+
             />
             <TextField
                 id="secondName"
@@ -163,7 +162,6 @@ const PersonCreate = (props) => {
                 value={person.secondName}
                 onChange={handleChange}
                 fullWidth
-                required = {true}
             />
             <Button
                 type="submit"
@@ -173,14 +171,7 @@ const PersonCreate = (props) => {
                 className={classes.button}>
                 {isExistingPerson ? "Edit" : "Create"}
             </Button>
-            <Button
-                variant="contained"
-                size="medium"
-                color="primary"
-                onClick={handleDelete}
-                className={classes.button}>
-                Delete Person
-            </Button>
+            {isExistingPerson ? <Button variant="contained" size="medium" color="primary" onClick={handleDelete} className={classes.button}> Delete Person </Button> : ''}
             <Snackbar
                 anchorOrigin={{
                     vertical: 'bottom',
@@ -190,8 +181,7 @@ const PersonCreate = (props) => {
                 autoHideDuration={error ? 5000 : 1000}
                 onClose={handleSnackBarClose}
                 message={snackBar.message}
-            >
-            </Snackbar>
+            />
         </form>
     )
 };

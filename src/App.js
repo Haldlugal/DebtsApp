@@ -1,6 +1,6 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import './App.css';
-import {BrowserRouter, Route, Switch} from 'react-router-dom';
+import {BrowserRouter, Switch} from 'react-router-dom';
 import Navbar from './components/layout/Navbar';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar'
@@ -12,33 +12,58 @@ import PersonCreate from "./components/persons/PersonCreate";
 import DebtCreate from "./components/debts/DebtCreate";
 import SignInForm from "./components/auth/SignIn";
 import SignUpForm from "./components/auth/SignUp";
+import Logout from "./components/auth/Logout";
+import {PrivateRouter, NonPrivateRouter} from "./CustomRouters";
+import {useDispatch, useSelector} from "react-redux";
+import * as types from "./store/sagas/auth/ActionTypes";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import makeStyles from "@material-ui/core/styles/makeStyles";
 
-class App extends React.Component{
-  render() {
-    return (
-        <BrowserRouter>
-          <AppBar color="primary" position="static">
-            <Toolbar>
-              <TypoGraphy variant="h5" color="inherit">
-                Debts Manager
-              </TypoGraphy>
-            <Navbar/>
-            </Toolbar>
-          </AppBar>
-          <Switch>
-            <Route exact path="/" component={Dashboard} />
-            <Route exact path="/debts" component={DebtList} />
-            <Route exact path="/persons" component={PersonList} />
-            <Route exact path="/signIn" component={SignInForm} />
-            <Route exact path="/signUp" component={SignUpForm} />
-            <Route exact path="/persons/create" component={PersonCreate}/>
-            <Route path="/persons/edit/:id" component={PersonCreate}/>
-            <Route exact path="/debts/create" component={DebtCreate}/>
-            <Route path="/debts/edit/:id" component={DebtCreate}/>
-          </Switch>
-        </BrowserRouter>
-    );
-  }
-}
+
+const useStyles = makeStyles(theme => ({
+    progress: {
+        margin: theme.spacing(4),
+    },
+}));
+
+const App = () => {
+    const authChecked = useSelector(state=> state.auth.authChecked);
+    const dispatch = useDispatch();
+
+    useEffect(()=>{
+        dispatch({type: types.IS_AUTHENTICATED_REQUEST});
+    }, []);
+
+
+    const classes = useStyles();
+    if (!authChecked) {
+        return  <CircularProgress className={classes.progress} root={classes.progress}/>;
+    } else {
+        return (
+            <BrowserRouter>
+                <AppBar color="primary" position="static">
+                    <Toolbar>
+                        <TypoGraphy variant="h5" color="inherit">
+                            Debts Manager
+                        </TypoGraphy>
+                        <Navbar/>
+                    </Toolbar>
+                </AppBar>
+                <Switch>
+                    <NonPrivateRouter exact path="/signIn" component={SignInForm}/>
+                    <NonPrivateRouter exact path="/signUp" component={SignUpForm}/>
+                    <PrivateRouter exact path="/" component={Dashboard}/>
+                    <PrivateRouter exact path="/debts" component={DebtList}/>
+                    <PrivateRouter exact path="/persons" component={PersonList}/>
+                    <PrivateRouter exact path="/persons/create" component={PersonCreate}/>
+                    <PrivateRouter exact path="/persons/edit/:id" component={PersonCreate}/>
+                    <PrivateRouter exact path="/debts/create" component={DebtCreate}/>
+                    <PrivateRouter exact path="/debts/edit/:id" component={DebtCreate}/>
+                    <PrivateRouter exact path="/logout" component={Logout}/>
+                </Switch>
+            </BrowserRouter>
+        );
+    }
+};
 
 export default App;

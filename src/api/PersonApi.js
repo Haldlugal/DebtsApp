@@ -2,21 +2,22 @@ class PersonApi {
     static fetchPersons() {
         return fetch('http://drupal7/api/persons_api', {
             method: 'GET',
+            mode: 'cors',
+            credentials: 'include',
             headers: {
-                'Accept': 'application/json',
-                'Cookie': 'NACCWqASBbd2DqA1hsThD-Ez1mKrovcYipsflL9w8As=NACCWqASBbd2DqA1hsThD-Ez1mKrovcYipsflL9w8As'
+                'Accept': 'application/json'
             }
         })
-        .then(response => {return response.json();});
-
+        .then(response => {
+            return response.json();});
     }
 
     static fetchSinglePerson(id) {
         return fetch('http://drupal7/api/terms/'+id, {
             method: 'GET',
+            credentials: 'include',
             headers: {
-                'Accept': 'application/json',
-                'Cookie': 'NACCWqASBbd2DqA1hsThD-Ez1mKrovcYipsflL9w8As=NACCWqASBbd2DqA1hsThD-Ez1mKrovcYipsflL9w8As'
+                'Accept': 'application/json'
             }
         })
         .then(response => {return response.json();})
@@ -50,8 +51,7 @@ class PersonApi {
             method: 'POST',
             headers: {
                 'content-type': 'application/json',
-                'Accept': 'application/json',
-                'Cookie': 'NACCWqASBbd2DqA1hsThD-Ez1mKrovcYipsflL9w8As=NACCWqASBbd2DqA1hsThD-Ez1mKrovcYipsflL9w8As'
+                'Accept': 'application/json'
                 },
             body: JSON.stringify(body)
             });
@@ -80,21 +80,17 @@ class PersonApi {
             method: 'POST',
             headers: {
                 'content-type': 'application/json',
-                'Accept': 'application/json',
-                //'X-CSRF-Token': 'qZxmGKITTToGzzmfmvwI866bVn03K4Os1enTZ5okODc',
-                'Cookie': 'NACCWqASBbd2DqA1hsThD-Ez1mKrovcYipsflL9w8As=NACCWqASBbd2DqA1hsThD-Ez1mKrovcYipsflL9w8As'
+                'Accept': 'application/json'
             },
             body: JSON.stringify(body)
-        })
-        .then(response => {return response;});
+        });
     }
 
     static deletePerson(person) {
         return fetch('http://drupal7/api/terms/'+person.id, {
             method: 'DELETE',
             headers: {
-                'Accept': 'application/json',
-                'Cookie': 'NACCWqASBbd2DqA1hsThD-Ez1mKrovcYipsflL9w8As=NACCWqASBbd2DqA1hsThD-Ez1mKrovcYipsflL9w8As'
+                'Accept': 'application/json'
             }
         })
     }

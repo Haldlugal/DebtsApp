@@ -1,7 +1,11 @@
 import { fork, all } from "redux-saga/effects";
-import * as listeners from './persons/Listeners';
+import * as personListeners from './persons/Listeners';
+import * as authListeners from './auth/Listeners';
 
 
 export function* watcherSaga() {
-    yield all([fork(listeners.personsSaga), fork(listeners.singlePersonSaga), fork(listeners.editPersonSaga), fork(listeners.addPersonSaga), fork(listeners.deletePersonSaga)]);
+    yield all([
+        fork(personListeners.personsSaga), fork(personListeners.singlePersonSaga), fork(personListeners.editPersonSaga), fork(personListeners.addPersonSaga), fork(personListeners.deletePersonSaga),
+        fork(authListeners.signInSaga), fork(authListeners.logoutSaga), fork(authListeners.isAuthenticatedSaga), fork(authListeners.signUpSaga)
+        ]);
 }

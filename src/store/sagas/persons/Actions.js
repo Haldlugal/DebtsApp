@@ -1,4 +1,4 @@
-import { call, put, delay } from "redux-saga/effects";
+import { call, put } from "redux-saga/effects";
 import * as types from './ActionTypes';
 import personApi from '../../../api/PersonApi';
 
@@ -14,7 +14,6 @@ export function* getPersons() {
 export function* getSinglePerson(action) {
     try {
         yield put({ type: types.PERSON_FETCHING});
-        yield delay(1000);
         if (typeof action.payload.id!== 'undefined') {
             const response = yield call(personApi.fetchSinglePerson, action.payload.id);
             yield put({type: types.GET_PERSON_SUCCESS, person: response});
@@ -26,7 +25,6 @@ export function* getSinglePerson(action) {
                 }});
         }
     } catch (error) {
-        console.log(error);
         yield put({ type: types.GET_PERSON_FAILURE, error});
     }
 }
@@ -34,7 +32,7 @@ export function* getSinglePerson(action) {
 export function* editPerson(action) {
     try {
         yield call(personApi.editPerson, action.payload);
-        yield put({type: types.EDIT_PERSON_SUCCESS, action});
+        yield put({type: types.EDIT_PERSON_SUCCESS});
     } catch (error) {
         yield put({type: types.EDIT_PERSON_FAILURE, error});
     }

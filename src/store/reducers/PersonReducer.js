@@ -7,10 +7,6 @@ const initState = {
 
 const personReducer = (state = initState, action) => {
     switch (action.type) {
-        case types.UPDATE_PERSON_FORM:
-            const propName = Object.keys(action.payload)[0];
-            return {...state, [propName]: action.payload[propName]};
-
         case types.GET_PERSONS_REQUEST:
             return {...state, fetching:true, error: null, success:false};
         case types.GET_PERSONS_SUCCESS:
@@ -27,12 +23,14 @@ const personReducer = (state = initState, action) => {
 
         case types.CREATE_PERSON_SUCCESS:
             return {...state, success: true};
+
         case types.EDIT_PERSON_REQUEST:
             return {...state, firstName: action.payload.firstName, secondName: action.payload.secondName};
         case types.EDIT_PERSON_SUCCESS:
             return {...state, success: true};
         case types.EDIT_PERSON_FAILURE:
             return {...state, success: false, error: action.error};
+
         case types.DELETE_PERSON_SUCCESS:
             return state;
 

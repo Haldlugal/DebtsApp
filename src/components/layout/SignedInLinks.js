@@ -4,9 +4,6 @@ import {NavLink} from 'react-router-dom';
 import ListItemText from '@material-ui/core/ListItemText';
 import TypoGraphy from '@material-ui/core/Typography'
 
-
-
-
 const SignedInLinks = () => {
     return (
         <Fragment>
@@ -37,5 +34,5 @@ const SignedInLinks = () => {
             </ListItemText>
         </Fragment>
     )
-}
+};
 export default SignedInLinks;
