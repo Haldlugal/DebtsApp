@@ -1,7 +1,3 @@
-import {getCookie} from "../helpers/Cookie";
-
-
-
 class AuthApi {
     static getToken() {
         return fetch('http://drupal7/services/session/token', {

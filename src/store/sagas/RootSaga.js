@@ -8,6 +8,6 @@ export function* watcherSaga() {
     yield all([
         fork(personListeners.personsSaga), fork(personListeners.singlePersonSaga), fork(personListeners.editPersonSaga), fork(personListeners.addPersonSaga), fork(personListeners.deletePersonSaga),
         fork(authListeners.signInSaga), fork(authListeners.logoutSaga), fork(authListeners.isAuthenticatedSaga), fork(authListeners.signUpSaga),
-        fork(debtListeners.personsSaga), fork(debtListeners.createDebtSaga)
+        fork(debtListeners.personsSaga), fork(debtListeners.createDebtSaga), fork(debtListeners.debtsSaga), fork(debtListeners.deleteDebtSaga), fork(debtListeners.getSingleDebtSaga), fork(debtListeners.editDebtSaga), fork(debtListeners.getStatisticsSaga)
         ]);
 }

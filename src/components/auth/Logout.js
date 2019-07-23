@@ -1,5 +1,5 @@
-import {useDispatch, useSelector} from "react-redux";
-import React, {Fragment, useEffect, useState} from "react";
+import {useDispatch} from "react-redux";
+import React, {Fragment, useEffect} from "react";
 import * as types from "../../store/sagas/auth/ActionTypes";
 
 const Logout = () => {

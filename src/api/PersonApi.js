@@ -32,6 +32,7 @@ class PersonApi {
     static fetchSinglePerson(id) {
         return fetch('http://drupal7/api/terms/'+id, {
             method: 'GET',
+            mode: 'cors',
             credentials: 'include',
             headers: {
                 'Accept': 'application/json'
@@ -66,6 +67,8 @@ class PersonApi {
         };
         return fetch('http://drupal7/api/terms/', {
             method: 'POST',
+            mode: 'cors',
+            credentials: 'include',
             headers: {
                 'content-type': 'application/json',
                 'Accept': 'application/json'
@@ -78,6 +81,13 @@ class PersonApi {
         const body = {
             "vid": "2",
             "name": person.firstName+" "+person.secondName,
+            "field_author_id": {
+                "und": [
+                    {
+                        "value": person.author_id
+                    }
+                ]
+            },
             "field_persons_first_name": {
                 "und": [
                     {
@@ -93,13 +103,22 @@ class PersonApi {
                 ]
             }
         };
+
         return fetch('http://drupal7/api/terms', {
             method: 'POST',
+            mode: 'cors',
+            credentials: 'include',
             headers: {
                 'content-type': 'application/json',
                 'Accept': 'application/json'
             },
             body: JSON.stringify(body)
+        }).then((response)=>{
+            if (response.status!==200){
+                throw Error(response.statusText);
+            }
+        }).catch(error=> {
+            throw error;
         });
     }
 

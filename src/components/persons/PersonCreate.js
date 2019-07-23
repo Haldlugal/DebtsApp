@@ -43,6 +43,7 @@ const PersonCreate = (props) => {
     const fetching = useSelector(state => state.persons.fetching);
     const success = useSelector(state => state.persons.success);
     const error = useSelector(state => state.persons.error);
+
     const [redirectToPersons, setRedirectToPersons] = useState(false);
     const [snackBar, setSnackBar] = useState({opened: false, message: ""});
     const [person, setPerson] = useState({

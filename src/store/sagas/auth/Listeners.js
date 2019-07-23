@@ -17,3 +17,4 @@ export function* isAuthenticatedSaga() {
 export function* signUpSaga() {
     yield takeLatest(types.SIGN_UP_REQUEST, actions.signUp);
 }
+

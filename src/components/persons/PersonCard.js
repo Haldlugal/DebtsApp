@@ -34,15 +34,32 @@ class PersonCard extends React.Component {
                                         {this.props.person.first_name +" "+this.props.person.second_name}
                                     </Typography>
                                     <Typography variant="body2" gutterBottom>
-                                        My debt: 3 <span>R</span>
+                                        My debt: {this.props.person.myDebtSummRub?this.props.person.myDebtSummRub*(-1)+" RUB ":""}
+                                        {this.props.person.myDebtSummEur?this.props.person.myDebtSummEur*(-1)+" EUR ":""}
+                                        {this.props.person.myDebtSummDol?this.props.person.myDebtSummDol*(-1)+" DOL ":""}
                                     </Typography>
                                     <Typography variant="body2">
-                                        Their debt: 10 <span>R</span>
+                                        Their debt: {this.props.person.theirDebtSummRub?this.props.person.theirDebtSummRub+" RUB ":""}
+                                        {this.props.person.theirDebtSummEur?this.props.person.theirDebtSummEur+" EUR ":""}
+                                        {this.props.person.theirDebtSummDol?this.props.person.theirDebtSummDol+" DOL ":""}
                                     </Typography>
                                 </Grid>
                             </Grid>
                             <Grid item className={this.props.classes.money}>
-                                <Typography variant="subtitle1"><span>R</span>19.00</Typography>
+                                <div>
+                                    <Typography variant="subtitle1">
+                                        {(this.props.person.myDebtSummRub+this.props.person.theirDebtSummRub)?this.props.person.myDebtSummRub+this.props.person.theirDebtSummRub:0}
+                                        <span> RUB </span>
+                                    </Typography>
+                                    <Typography variant="subtitle1">
+                                        {(this.props.person.myDebtSummEur+this.props.person.theirDebtSummEur)?this.props.person.myDebtSummEur+this.props.person.theirDebtSummEur:0}
+                                        <span> EUR </span>
+                                    </Typography>
+                                    <Typography variant="subtitle1">
+                                        {(this.props.person.myDebtSummDol+this.props.person.theirDebtSummDol)?this.props.person.myDebtSummDol+this.props.person.theirDebtSummDol:0}
+                                        <span> DOL </span>
+                                    </Typography>
+                                </div>
                             </Grid>
                         </Grid>
                     </Grid>

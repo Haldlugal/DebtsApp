@@ -22,8 +22,10 @@ const authReducer = (state = initState, action) => {
             return {...state, authError: null};
         case types.LOGIN_ERROR_RESET:
             return {...state, loginError: null}
+        default:
+            return state;
     }
-    return state;
+
 };
 
 export default authReducer;
