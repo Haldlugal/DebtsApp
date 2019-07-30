@@ -32,7 +32,6 @@ const DebtCard = (props) => {
     const paymentDate = new Date(props.debt.field_expiration_date);
     const paymentDateFormatted = paymentDate.getDate() + "/" + (paymentDate.getMonth() + 1) + "/" + paymentDate.getFullYear();
 
-    console.log();
     const classes = useStyles();
     return(
         <NavLink to={"/debts/edit/"+props.debt.Nid}>
@@ -48,9 +47,8 @@ const DebtCard = (props) => {
                                     Taken at: {dateCreatedFormatted}
                                 </Typography>
                                 <Typography variant="body2">
-
                                     <span
-                                        className={(moment(paymentDateFormatted) < moment())?classes.deadlineAlert:''}>
+                                        className={(moment(props.debt.field_expiration_date) < moment())?classes.deadlineAlert:''}>
                                         Deadline: {paymentDateFormatted}
                                     </span>
                                 </Typography>

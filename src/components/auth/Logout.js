@@ -8,7 +8,7 @@ const Logout = () => {
 
     useEffect(()=>{
         dispatch({type: types.LOGOUT_REQUEST});
-    }, []);
+    }, [dispatch]);
     return <Fragment></Fragment>;
 };
 

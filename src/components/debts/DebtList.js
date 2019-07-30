@@ -15,6 +15,8 @@ import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import moment from "moment";
+import {TableFooter, TableRow} from "@material-ui/core";
+import Table from "@material-ui/core/Table";
 
 
 const useStyles = makeStyles(theme => ({
@@ -25,6 +27,11 @@ const useStyles = makeStyles(theme => ({
         textDecoration: "none"
     },
     progress: {
+        margin: theme.spacing(4),
+        position: 'absolute',
+        left: '50%',
+        top: '40%',
+        marginRight: 20
     },
     search: {
         bottom: 1,
@@ -71,7 +78,7 @@ const useStyles = makeStyles(theme => ({
 const DebtList = () => {
 
     const dispatch = useDispatch();
-    const fetching = useSelector(state=> state.debts.fetchingDebts);
+    const fetching = useSelector(state=> state.debts.fetching);
     const debts = useSelector(state=>state.debts.debts);
     const [page, setPage] = useState(0);
     const [search, setSearch] = useState('');
@@ -80,7 +87,7 @@ const DebtList = () => {
 
     useEffect( () => {
         dispatch({type: types.GET_DEBTS_REQUEST});
-    }, []);
+    }, [dispatch]);
 
     const classes = useStyles();
 
@@ -94,7 +101,6 @@ const DebtList = () => {
 
     function handleSortChange(event) {
         setSort(event.target.value);
-        console.log(debts);
     }
 
     function handleSortOrderChange(event) {
@@ -134,8 +140,7 @@ const DebtList = () => {
             return debts;
         }
     }
-
-    const debtsToShow = debts.filter((debt)=>debt.Name.toLowerCase().includes(search))
+    const debtsToShow = debts? debts.filter((debt)=>debt.Name.toLowerCase().includes(search)): [];
     if (fetching) return (<CircularProgress className={classes.progress} root={classes.progress}/>)
     else return (
         <Fragment>
@@ -184,6 +189,7 @@ const DebtList = () => {
                         name="sortOrder"
                         inputProps={{
                             id: 'sortOrder',
+                            'aria-label': 'sortOrder'
                         }}
                     >
                         <option value={'desc'}>DESC</option>
@@ -200,18 +206,24 @@ const DebtList = () => {
                     })
                 }
             </div>
-            <TablePagination
-                rowsPerPageOptions={[5]}
-                count={debtsToShow.length}
-                rowsPerPage={5}
-                page={page}
-                SelectProps={{
-                    inputProps: { 'aria-label': 'Rows per page' },
-                    native: true,
-                }}
-                onChangePage={handleChangePage}
-                ActionsComponent={PaginationActions}
-            />
+            <Table>
+                <TableFooter>
+                    <TableRow>
+                        <TablePagination
+                            rowsPerPageOptions={[5]}
+                            count={debtsToShow.length}
+                            rowsPerPage={5}
+                            page={page}
+                            SelectProps={{
+                                inputProps: { 'aria-label': 'Rows per page' },
+                                native: true,
+                            }}
+                            onChangePage={handleChangePage}
+                            ActionsComponent={PaginationActions}
+                        />
+                    </TableRow>
+                </TableFooter>
+            </Table>
         </Fragment>
     );
 };

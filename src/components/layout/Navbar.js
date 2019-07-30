@@ -3,10 +3,8 @@ import ListItem from '@material-ui/core/ListItem';
 import SignedOutLinks from './SignedOutLinks';
 import SignedInLinks from './SignedInLinks';
 import List from '@material-ui/core/List';
-import  './Navbar.css';
+
 import {useSelector} from "react-redux";
-
-
 
 const Navbar = () => {
 

@@ -1,9 +1,9 @@
 import reducer from '../../../store/reducers/PersonReducer'
 
 
-describe('REDUCER', () => {
+describe('PERSON REDUCER', () => {
     it('should return the initial state', () => {
-        expect(reducer(undefined, {})).toEqual({persons: []})
+        expect(reducer(undefined, {})).toEqual({persons: [], error: null, fetching: false})
     });
 
     it('should handle "GET_PERSONS_REQUEST" action', () => {

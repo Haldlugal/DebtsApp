@@ -2,6 +2,7 @@ import * as types from '../sagas/auth/ActionTypes';
 
 const initState = {login: false, authChecked: false};
 
+
 const authReducer = (state = initState, action) => {
     switch (action.type) {
         case types.LOGIN_SUCCESS:
@@ -21,7 +22,8 @@ const authReducer = (state = initState, action) => {
         case types.SIGN_UP_ERROR_RESET:
             return {...state, authError: null};
         case types.LOGIN_ERROR_RESET:
-            return {...state, loginError: null}
+            console.log('login error reset');
+            return {...state, loginError: null};
         default:
             return state;
     }

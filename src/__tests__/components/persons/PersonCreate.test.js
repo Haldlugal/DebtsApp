@@ -7,8 +7,6 @@ import {MemoryRouter, Route, Switch} from 'react-router-dom';
 import '@testing-library/jest-dom';
 import renderer from 'react-test-renderer';
 import "@testing-library/react/cleanup-after-each";
-import personApi from "../../../api/PersonApi";
-import {wrapWithProvider} from "../../providerWrapper";
 
 const mockStore = configureMockStore();
 const store = mockStore({persons: {
@@ -27,6 +25,7 @@ describe('PersonCreate', () => {
     test('there is create button if id is undefined', () => {
         const container = render(<Provider store={store}><PersonCreate {...defaultProps}/></Provider>);
         const editButton = container.getByText('Create').closest('button');
+        expect(editButton).toBeDefined();
     });
 
     test('change firstName field', () => {
@@ -88,14 +87,51 @@ describe('PersonCreate', () => {
         await waitForElement(() => getByTestId("fakePersonList"));
     });
 
-    test('creating invokes addPerson api call', async () => {
+    test ('pressing create button dispatches CREATE_PERSON_REQUEST', () =>{
+        const container = render(<Provider store={store}><PersonCreate {...defaultProps}/></Provider>);
+        const createButton = container.getByText('Create').closest('button');
+        const inputNodeFirstName = container.getByLabelText('First Name');
+        const inputNodeSecondName = container.getByLabelText('Second Name');
+        fireEvent.change(inputNodeFirstName, {target: {value: mockPersonToCreate.firstName}});
+        fireEvent.change(inputNodeSecondName, {target: {value: mockPersonToCreate.secondName}});
+        store.clearActions();
+        fireEvent.click(createButton);
+        expect(store.getActions()).toEqual([{
+            type: 'CREATE_PERSON_REQUEST', payload: mockPersonToCreate
+        }])
+    });
+
+    test ('error snackbar is shown in case of error', ()=> {
+        const defaultProps = {
+            match: {params: {id: undefined}},
+        };
+        const store = mockStore({
+            persons: {
+                success: false,
+                error: {
+                    message: "i am error message!"
+                }
+            }
+        });
+        const container = render(<Provider store={store}><PersonCreate {...defaultProps}/></Provider>);
+        const snackbar = container.getByText('i am error message!');
+        expect(snackbar).toBeDefined();
+    });
+
+    test('person create snapshot', () => {
+        const container = renderer.create(<Provider
+            store={store}><PersonCreate {...defaultProps}/></Provider>).toJSON();
+        expect(container).toMatchSnapshot();
+    });
+});
+
+/*test('creating invokes addPerson api call', async () => {
         const personCreateComponent = <PersonCreate {...defaultProps}/>;
         const container = render(<MemoryRouter>{wrapWithProvider(personCreateComponent)}</MemoryRouter>);
         const createButton = container.getByText('Create').closest('button');
         const inputNodeFirstName = container.getByLabelText('First Name');
         const inputNodeSecondName = container.getByLabelText('Second Name');
         window.fetch = jest.fn().mockImplementation();
-
         fireEvent.change(inputNodeFirstName, {target: {value: mockPersonToCreate.firstName}});
         fireEvent.change(inputNodeSecondName, {target: {value: mockPersonToCreate.secondName}});
         fireEvent.click(createButton);
@@ -110,12 +146,4 @@ describe('PersonCreate', () => {
                 "method": "POST",
             }
         );
-
-    });
-
-    test('person create snapshot', () => {
-        const container = renderer.create(<Provider
-            store={store}><PersonCreate {...defaultProps}/></Provider>).toJSON();
-        expect(container).toMatchSnapshot();
-    });
-});
+    });*/

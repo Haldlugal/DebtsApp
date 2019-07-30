@@ -1,19 +1,16 @@
 import React from 'react'
-import { render, fireEvent, waitForElement, waitForElementToBeRemoved} from '@testing-library/react'
+import {render, fireEvent, waitForElement, act} from '@testing-library/react'
 import PersonList from '../../../components/persons/PersonList';
 import {Provider} from "react-redux";
-import configureMockStore from 'redux-mock-store';
 import {MemoryRouter, Route, Switch} from 'react-router-dom';
 import '@testing-library/jest-dom';
 import "@testing-library/react/cleanup-after-each";
 import renderer from "react-test-renderer";
-import PersonCreate from "../../../components/persons/PersonCreate";
+import {store} from '../helpers/personsMockStore';
 
-const mockStore = configureMockStore();
-const store = mockStore({persons: { persons :[
-        {first_name: 'Harry', second_name: 'FromThePot', tid: 1},
-        {first_name: 'Albus', second_name: 'DumbleBeard', tid: 2}
-    ]}
+
+afterEach(() => {
+    store.clearActions();
 });
 
 describe('PersonList', () => {
@@ -42,9 +39,55 @@ describe('PersonList', () => {
                     <Route path="/persons/edit/:id" component={FakeCreateForm} />
                 </Switch>
             </MemoryRouter>);
-        const personCard = test.getByText('Harry FromThePot');
+        const personCard = test.getByText('Ulix Turner');
         fireEvent.click(personCard);
         await waitForElement(()=> test.getByTestId('fakeEditForm'));
+    });
+
+    test('PersonList dispatches GET_PERSONS_REQUEST', async () => {
+        act(()=>{render(<MemoryRouter><Provider store={store}><PersonList/></Provider></MemoryRouter>)});
+        expect(store.getActions()).toEqual([{
+            type: 'GET_PERSONS_REQUEST'
+        }])
+    });
+
+    test('Searching filters the list of persons', () => {
+        const container = render(<MemoryRouter><Provider store={store}><PersonList/></Provider></MemoryRouter>);
+        const searchField = container.getByLabelText('Search');
+        fireEvent.change(searchField, { target: { value: 'Ulix' } });
+        expect(container).toMatchSnapshot();
+    });
+
+    test('Sorting by name sorts the list of persons by name', () =>{
+        const container = render(<MemoryRouter><Provider store={store}><PersonList/></Provider></MemoryRouter>);
+        const sortField = container.getByLabelText('Sort By');
+        fireEvent.change(sortField, { target: { value: 'name' } });
+        expect(container).toMatchSnapshot();
+    });
+
+    test('Sorting by debt in rubles sorts the list of persons by debt in rubles (Descending)', () =>{
+        const container = render(<MemoryRouter><Provider store={store}><PersonList/></Provider></MemoryRouter>);
+        const sortField = container.getByLabelText('Sort By');
+        fireEvent.change(sortField, { target: { value: 'rubDebt' } });
+        expect(container).toMatchSnapshot();
+    });
+
+    test('Sorting by debt in euro sorts the list of persons by debt in euro (Ascending)', () =>{
+        const container = render(<MemoryRouter><Provider store={store}><PersonList/></Provider></MemoryRouter>);
+        const sortField = container.getByLabelText('Sort By');
+        const sortOrder = container.getByLabelText('sortOrder');
+        fireEvent.change(sortField, { target: { value: 'eurDebt' } });
+        fireEvent.change(sortOrder, { target: { value: 'asc' } });
+        expect(container).toMatchSnapshot();
+    });
+
+    test('Sorting by debt in usd sorts the list of persons by debt in usd (Descending)', () =>{
+        const container = render(<MemoryRouter><Provider store={store}><PersonList/></Provider></MemoryRouter>);
+        const sortField = container.getByLabelText('Sort By');
+        const sortOrder = container.getByLabelText('sortOrder');
+        fireEvent.change(sortField, { target: { value: 'usdDebt' } });
+        fireEvent.change(sortOrder, { target: { value: 'desc' } });
+        expect(container).toMatchSnapshot();
     });
 
     test ('Person List snapshot', ()=>{
@@ -52,5 +95,19 @@ describe('PersonList', () => {
             store={store}><PersonList/></Provider></MemoryRouter>).toJSON();
         expect(container).toMatchSnapshot();
     });
-
 });
+
+/*test('PersonList invoke getPersonsWithDebts saga', async () => {
+        const mockSuccessResponse = {};
+        const mockJsonPromise = Promise.resolve(mockSuccessResponse); // 2
+        const mockFetchPromise = Promise.resolve({ // 3
+            status: 200,
+            json: () => mockJsonPromise,
+        });
+       window.fetch = jest.fn().mockImplementation(()=> mockFetchPromise );
+
+       act(()=>{render(wrapWithProvider(<MemoryRouter><PersonList/></MemoryRouter>))});
+   });*/
+
+
+

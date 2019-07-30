@@ -4,7 +4,7 @@ import { takeLatest } from "redux-saga/effects";
 
 
 export function* personsSaga() {
-    yield takeLatest(types.GET_PERSONS_REQUEST, actions.getPersons);
+    yield takeLatest(types.GET_PERSONS_REQUEST, actions.getPersonsWithDebts);
 }
 
 export function* singlePersonSaga() {

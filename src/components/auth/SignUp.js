@@ -1,11 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import TextField from "@material-ui/core/TextField";
-import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import {useDispatch, useSelector} from "react-redux";
 import * as types from "../../store/sagas/auth/ActionTypes";
-import Snackbar from "@material-ui/core/Snackbar";
+import {red} from "@material-ui/core/colors";
 
 const useStyles = makeStyles(theme => ({
     title: {
@@ -16,14 +15,36 @@ const useStyles = makeStyles(theme => ({
     },
     textField: {
         display: "block",
-        width: 400,
-        marginLeft: 20,
-        marginRight: 20,
+        width: 400
     },
     button: {
         width: 200,
+        marginTop: 20
+    },
+    mySnackBar: {
+        top:585,
+        left:20
+    },
+    signUpForm: {
+        maxWidth:400,
+        textAlign: 'center',
+        marginTop: theme.spacing(5),
+        marginLeft: 'auto',
+        marginRight: 'auto',
+    },
+    message: {
         marginTop: 20,
-        marginLeft: 20,
+        position: 'relative',
+        padding: 10,
+
+    },
+    errorMessage: {
+        border: '1px solid red',
+        color: 'red'
+    },
+    successMessage: {
+        border: '1px solid green',
+        color: 'green'
     }
 }));
 
@@ -64,22 +85,29 @@ const SignUpForm = () => {
         }
     });
 
-    const [snackBar, setSnackBar] = useState({opened: false, message: ""});
+    const [errorMessage, setErrorMessage] = useState({opened: false, message: ""});
+    const [successMessage, setSuccessMessage] = useState({opened: false, message: ""});
+
 
     useEffect (() => {
         if (error) {
-            setSnackBar({opened: true, message: error});
+            setErrorMessage({opened: true, message: error});
+        } else {
+            setErrorMessage({opened: false, message: ''});
         }
-        else if (success) {
-            setSnackBar({opened: true, message: "User created successfully"});
-        }
-    }, [success, error]);
 
-    const handleSnackBarClose = () => {
-        setSnackBar({opened: false, message: ""});
-        dispatch({type: types.SIGN_UP_ERROR_RESET});
-        dispatch({type: types.SIGN_UP_SUCCESS_RESET});
-    };
+        /*else if (success) {
+            setSnackBar({opened: true, message: "User created successfully", success: true});
+        }*/
+    }, [error]);
+
+    useEffect (() => {
+        if (success) {
+            setSuccessMessage({opened: true,  message: "User created successfully"});
+        } else {
+            setSuccessMessage({opened: false, message: ''});
+        }
+    }, [success]);
 
     const handleChange = (event) => {
         setAuth({...auth, [event.target.id]: event.target.value});
@@ -143,10 +171,7 @@ const SignUpForm = () => {
 
     const classes = useStyles();
     return (
-        <form noValidate autoComplete="off" onSubmit={handleSubmit}>
-            <Typography className={classes.title} >
-                Sign up
-            </Typography>
+        <form noValidate autoComplete="off" className={classes.signUpForm} onSubmit={handleSubmit}>
             <TextField
                 id="login"
                 label={formMessages.loginField.message}
@@ -210,21 +235,14 @@ const SignUpForm = () => {
                 className={classes.button}>
                 Sign Up
             </Button>
-            <Snackbar
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                }}
-                open={snackBar.opened}
-                autoHideDuration={error ? 5000 : 1000}
-                onClose={handleSnackBarClose}
-                message={snackBar.message}
-            />
+            {errorMessage.opened? <div className={classes.errorMessage+' '+classes.message}>{errorMessage.message}</div> : ''}
+            {successMessage.opened? <div className={classes.successMessage+' '+classes.message}>{successMessage.message}</div> : ''}
         </form>
     )
 };
 
 const validate = (email) => {
+    // eslint-disable-next-line no-control-regex,no-useless-escape
     const expression = /(?!.*\.{2})^([a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+(\.[a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+)*|"((([ \t]*\r\n)?[ \t]+)?([\x01-\x08\x0b\x0c\x0e-\x1f\x7f\x21\x23-\x5b\x5d-\x7e\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|\\[\x01-\x09\x0b\x0c\x0d-\x7f\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))*(([ \t]*\r\n)?[ \t]+)?")@(([a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.)+([a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.?$/i;
     return expression.test(String(email).toLowerCase())
 };

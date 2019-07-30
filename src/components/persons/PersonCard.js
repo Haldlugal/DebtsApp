@@ -3,10 +3,10 @@ import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import {NavLink} from "react-router-dom";
-import { withStyles } from '@material-ui/styles';
+import makeStyles from "@material-ui/core/styles/makeStyles";
 
 
-const styles = {
+const useStyles = makeStyles(theme => ({
     paper: {
         padding: 20,
         margin: 'auto',
@@ -19,44 +19,45 @@ const styles = {
     display: 'flex',
     alignItems: 'center'
     },
-};
+}));
 
-class PersonCard extends React.Component {
-    render() {
+const PersonCard = (props) => {
+
+    const classes = useStyles();
         return (
-            <NavLink to={"/persons/edit/"+this.props.person.tid}>
-                <Paper className={this.props.classes.paper}>
+            <NavLink to={"/persons/edit/"+props.person.tid}>
+                <Paper className={classes.paper}>
                     <Grid container spacing={2}>
                         <Grid item xs={12} sm container>
                             <Grid item xs container direction="column" spacing={2}>
                                 <Grid item xs>
                                     <Typography gutterBottom variant="subtitle1">
-                                        {this.props.person.first_name +" "+this.props.person.second_name}
+                                        {props.person.first_name +" "+props.person.second_name}
                                     </Typography>
                                     <Typography variant="body2" gutterBottom>
-                                        My debt: {this.props.person.myDebtSummRub?this.props.person.myDebtSummRub*(-1)+" RUB ":""}
-                                        {this.props.person.myDebtSummEur?this.props.person.myDebtSummEur*(-1)+" EUR ":""}
-                                        {this.props.person.myDebtSummDol?this.props.person.myDebtSummDol*(-1)+" DOL ":""}
+                                        My debt: {props.person.myDebtSummRub?props.person.myDebtSummRub*(-1)+" RUB ":""}
+                                        {props.person.myDebtSummEur?props.person.myDebtSummEur*(-1)+" EUR ":""}
+                                        {props.person.myDebtSummDol?props.person.myDebtSummDol*(-1)+" DOL ":""}
                                     </Typography>
                                     <Typography variant="body2">
-                                        Their debt: {this.props.person.theirDebtSummRub?this.props.person.theirDebtSummRub+" RUB ":""}
-                                        {this.props.person.theirDebtSummEur?this.props.person.theirDebtSummEur+" EUR ":""}
-                                        {this.props.person.theirDebtSummDol?this.props.person.theirDebtSummDol+" DOL ":""}
+                                        Their debt: {props.person.theirDebtSummRub?props.person.theirDebtSummRub+" RUB ":""}
+                                        {props.person.theirDebtSummEur?props.person.theirDebtSummEur+" EUR ":""}
+                                        {props.person.theirDebtSummDol?props.person.theirDebtSummDol+" DOL ":""}
                                     </Typography>
                                 </Grid>
                             </Grid>
-                            <Grid item className={this.props.classes.money}>
+                            <Grid item className={classes.money}>
                                 <div>
                                     <Typography variant="subtitle1">
-                                        {(this.props.person.myDebtSummRub+this.props.person.theirDebtSummRub)?this.props.person.myDebtSummRub+this.props.person.theirDebtSummRub:0}
+                                        {(props.person.myDebtSummRub+props.person.theirDebtSummRub)?props.person.myDebtSummRub+props.person.theirDebtSummRub:0}
                                         <span> RUB </span>
                                     </Typography>
                                     <Typography variant="subtitle1">
-                                        {(this.props.person.myDebtSummEur+this.props.person.theirDebtSummEur)?this.props.person.myDebtSummEur+this.props.person.theirDebtSummEur:0}
+                                        {(props.person.myDebtSummEur+props.person.theirDebtSummEur)?props.person.myDebtSummEur+props.person.theirDebtSummEur:0}
                                         <span> EUR </span>
                                     </Typography>
                                     <Typography variant="subtitle1">
-                                        {(this.props.person.myDebtSummDol+this.props.person.theirDebtSummDol)?this.props.person.myDebtSummDol+this.props.person.theirDebtSummDol:0}
+                                        {(props.person.myDebtSummDol+props.person.theirDebtSummDol)?props.person.myDebtSummDol+props.person.theirDebtSummDol:0}
                                         <span> DOL </span>
                                     </Typography>
                                 </div>
@@ -66,7 +67,7 @@ class PersonCard extends React.Component {
                 </Paper>
             </NavLink>
         );
-    }
-}
 
-export default withStyles(styles)(PersonCard)
+};
+
+export default PersonCard;

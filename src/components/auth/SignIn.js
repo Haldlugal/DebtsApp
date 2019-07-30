@@ -5,24 +5,37 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import {useDispatch, useSelector} from "react-redux";
 import * as types from "../../store/sagas/auth/ActionTypes";
 import Snackbar from "@material-ui/core/Snackbar";
+import {red} from "@material-ui/core/colors";
 
 
 const useStyles = makeStyles(theme => ({
     container: {
         maxWidth:400,
-        marginTop: theme.spacing(2),
-        marginLeft: theme.spacing(2)
+        marginTop: theme.spacing(5),
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        textAlign: 'center'
     },
     textField: {
         display: "block",
-        width: 400,
-        marginLeft: theme.spacing(2),
-        marginRight: theme.spacing(2)
+        width: 400
     },
     button: {
         width: 200,
         marginTop: theme.spacing(2),
-        marginLeft: theme.spacing(2),
+        marginLeft: 'auto',
+        marginRight: 'auto'
+    },
+    mySnackBar: {
+        top:305,
+        left:30
+    },
+    errorMessage: {
+        marginTop: 20,
+        position: 'relative',
+        padding: 10,
+        border: '1px solid red',
+        color: 'red'
     }
 }));
 
@@ -43,18 +56,15 @@ const SignInForm =() => {
             message: 'Password'
         }
     });
-    const [snackBar, setSnackBar] = useState({opened: false, message: ""});
+    const [errorMessage, setErrorMessage] = useState({opened: false, message: ""});
 
     const error = useSelector(state => state.auth.loginError);
 
-    const handleSnackBarClose = () => {
-        setSnackBar({opened: false, message: ""});
-        dispatch({type: types.LOGIN_ERROR_RESET});
-    };
-
     useEffect (() => {
         if (error) {
-            setSnackBar({opened: true, message: error});
+            setErrorMessage({opened: true, message: error});
+        } else {
+            setErrorMessage({opened: false, message: ''});
         }
     }, [error]);
 
@@ -73,14 +83,14 @@ const SignInForm =() => {
             error = true;
             nameField = {errorStatus:true, message: 'This field is required'};
         } else {
-            nameField = {errorStatus:false, message: 'First Name'};
+            nameField = {errorStatus:false, message: 'Login'};
         }
 
         if (auth.password==='' || auth.password===undefined){
             error = true;
             passwordField = {errorStatus:true, message: 'This field is required'};
         } else {
-            passwordField = {errorStatus:false, message: 'Second Name'};
+            passwordField = {errorStatus:false, message: 'Password'};
         }
         setFormMessages({nameField: nameField, passwordField: passwordField});
         if (!error) {
@@ -125,16 +135,7 @@ const SignInForm =() => {
             >
                 Sign In
             </Button>
-            <Snackbar
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                }}
-                open={snackBar.opened}
-                autoHideDuration={error ? 5000 : 1000}
-                onClose={handleSnackBarClose}
-                message={snackBar.message}
-            />
+            {errorMessage.opened? <div className={classes.errorMessage}>{errorMessage.message}</div> : ''}
         </form>
     );
 };

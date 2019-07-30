@@ -13,6 +13,10 @@ import { fade, makeStyles } from '@material-ui/core/styles';
 import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import FormControl from "@material-ui/core/FormControl";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import Table from "@material-ui/core/Table";
+import {TableRow, TableFooter} from "@material-ui/core";
+
 
 
 const useStyles = makeStyles(theme => ({
@@ -61,13 +65,29 @@ const useStyles = makeStyles(theme => ({
     },
     sortOrderForm: {
         marginLeft: 15
-    }
+    },
+    error: {
+        marginLeft: 40,
+        marginTop: 40,
+        padding: 20,
+        width: 400,
+        border: '1px solid red'
+    },
+    progress: {
+        margin: theme.spacing(4),
+        position: 'absolute',
+        left: '50%',
+        top: '40%',
+        marginRight: 20
+    },
 }));
 
 const PersonList = () => {
 
     const dispatch = useDispatch();
     let persons = useSelector(state => state.persons.persons);
+    const fetching = useSelector(state => state.persons.fetching);
+    const error = useSelector(state=> state.persons.error);
     const [page, setPage] = useState(0);
     const [search, setSearch] = useState('');
     const [sort, setSort] = useState('');
@@ -75,9 +95,7 @@ const PersonList = () => {
 
     useEffect(()=>{
         dispatch({type: types.GET_PERSONS_REQUEST});
-    }, []);
-
-    const classes = useStyles();
+    }, [dispatch]);
 
     function handleChangePage(event, newPage) {
         setPage(newPage);
@@ -122,9 +140,14 @@ const PersonList = () => {
         }
     }
 
-    const personsToShow = persons.filter((person)=>(person.first_name+' '+person.second_name).toLowerCase().includes(search));
+    const classes = useStyles();
 
-    return (
+    const personsToShow = persons.filter((person)=>(person.first_name+' '+person.second_name).toLowerCase().includes(search));
+    if (fetching) {
+        return (<CircularProgress size={40} className={classes.progress}/>);
+    } else if (error) {
+        return <div className={classes.error}>{error}</div>
+    } else return (
         <Fragment>
             <Toolbar>
                 <NavLink to="/persons/create" className={classes.navLink}>
@@ -153,7 +176,7 @@ const PersonList = () => {
                         onChange={handleSortChange}
                         name="sort"
                         inputProps={{
-                            id: 'sort',
+                            'id': 'sort'
                         }}
                     >
                         <option value="" />
@@ -170,6 +193,7 @@ const PersonList = () => {
                         name="sortOrder"
                         inputProps={{
                             id: 'sortOrder',
+                            'aria-label': 'sortOrder'
                         }}
                     >
                         <option value={'desc'}>DESC</option>
@@ -184,18 +208,24 @@ const PersonList = () => {
                     })
                 }
             </div>
-            <TablePagination
-                rowsPerPageOptions={[5]}
-                count={personsToShow.length}
-                rowsPerPage={5}
-                page={page}
-                SelectProps={{
-                    inputProps: { 'aria-label': 'Rows per page' },
-                    native: true,
-                }}
-                onChangePage={handleChangePage}
-                ActionsComponent={PaginationActions}
-            />
+                <Table>
+                    <TableFooter>
+                        <TableRow>
+                            <TablePagination
+                                rowsPerPageOptions={[5]}
+                                count={personsToShow.length}
+                                rowsPerPage={5}
+                                page={page}
+                                SelectProps={{
+                                    inputProps: { 'aria-label': 'Rows per page' },
+                                    native: true,
+                                }}
+                                onChangePage={handleChangePage}
+                                ActionsComponent={PaginationActions}
+                            />
+                        </TableRow>
+                    </TableFooter>
+                </Table>
         </Fragment>
     );
 

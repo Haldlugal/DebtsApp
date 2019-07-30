@@ -1,4 +1,4 @@
-import { put, takeLatest } from 'redux-saga/effects';
+import { takeLatest } from 'redux-saga/effects';
 import * as types from "../../../../store/sagas/persons/ActionTypes";
 import * as actions from "../../../../store/sagas/persons/Actions";
 
@@ -14,27 +14,27 @@ describe('sagas personListeners', () => {
     it('should dispatch action "GET_PERSONS_REQUEST" ', () => {
         const generator = personsSaga();
         expect(generator.next().value)
-            .toEqual(takeLatest(types.GET_PERSONS_REQUEST, actions.getPersons));
+            .toEqual(takeLatest(types.GET_PERSONS_REQUEST, actions.getPersonsWithDebts));
         expect(generator.next().done).toBeTruthy();
-    })
+    });
     it('should dispatch action "GET_PERSON_REQUEST" ', () => {
         const generator = singlePersonSaga();
         expect(generator.next().value)
             .toEqual(takeLatest(types.GET_PERSON_REQUEST, actions.getSinglePerson));
         expect(generator.next().done).toBeTruthy();
-    })
+    });
     it('should dispatch action "EDIT_PERSON_REQUEST" ', () => {
         const generator = editPersonSaga();
         expect(generator.next().value)
             .toEqual(takeLatest(types.EDIT_PERSON_REQUEST, actions.editPerson));
         expect(generator.next().done).toBeTruthy();
-    })
+    });
     it('should dispatch action "CREATE_PERSON_REQUEST" ', () => {
         const generator = addPersonSaga();
         expect(generator.next().value)
             .toEqual(takeLatest(types.CREATE_PERSON_REQUEST, actions.addPerson));
         expect(generator.next().done).toBeTruthy();
-    })
+    });
     it('should dispatch action "DELETE_PERSON_REQUEST" ', () => {
         const generator = deletePersonSaga();
         expect(generator.next().value)

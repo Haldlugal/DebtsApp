@@ -7,8 +7,7 @@ import {MemoryRouter, Route, Switch} from 'react-router-dom';
 import '@testing-library/jest-dom';
 import renderer from "react-test-renderer";
 import "@testing-library/react/cleanup-after-each";
-import personApi from "../../../api/PersonApi";
-import {wrapWithProvider} from "../../providerWrapper";
+import {wrapWithProvider} from "../helpers/providerWrapper";
 
 const mockStore = configureMockStore();
 const store = mockStore({persons: {
@@ -114,11 +113,53 @@ describe('PersonEdit', () => {
         );
         const deleteButton = getByText('Delete Person').closest('button');
         fireEvent.click(deleteButton);
-
         await waitForElement(() => getByTestId("fakePersonList"));
     });
 
-    test('editing invokes editing api call', async ()=> {
+    test ('pressing edit button dispatches EDIT_PERSON_REQUEST', () =>{
+        const container = render(<Provider store={store}><PersonCreate {...defaultProps}/></Provider>);
+        const editButton = container.getByText('Edit').closest('button');
+        const inputNodeFirstName = container.getByLabelText('First Name');
+        const inputNodeSecondName = container.getByLabelText('Second Name');
+        fireEvent.change(inputNodeFirstName, {target: {value: mockPersonToEdit.firstName}});
+        fireEvent.change(inputNodeSecondName, {target: {value: mockPersonToEdit.secondName}});
+        store.clearActions();
+        fireEvent.click(editButton);
+        expect(store.getActions()).toEqual([{
+            type: 'EDIT_PERSON_REQUEST', payload: mockPersonToEdit
+        }])
+    });
+
+    test ('pressing delete button dispatches DELETE_PERSON_REQUEST', () =>{
+        const container = render(<MemoryRouter><Provider store={store}><PersonCreate {...defaultProps}/></Provider></MemoryRouter>);
+        const deleteButton = container.getByText('Delete Person').closest('button');
+        store.clearActions();
+        fireEvent.click(deleteButton);
+        expect(store.getActions()).toEqual([{
+            type: 'DELETE_PERSON_REQUEST', payload: {id:mockPersonToEdit.id}
+        }])
+    });
+
+    test('Person Edit snapshot', () => {
+        const container = renderer.create(<Provider
+            store={store}><PersonCreate {...defaultProps}/></Provider>).toJSON();
+        expect(container).toMatchSnapshot();
+})});
+
+/*test('deleting invokes deleting api call', async ()=> {
+        const personCreateComponent = <PersonCreate {...defaultProps}/>;
+        const container = render(<MemoryRouter>{wrapWithProvider(personCreateComponent)}</MemoryRouter>);
+        const deleteButton = container.getByText('Delete Person').closest('button');
+
+        window.fetch = jest.fn().mockImplementation((url, params) =>{
+            expect(url).toBe('http://drupal7/api/terms/'+mockPersonToDelete.id);
+        });
+
+        fireEvent.click(deleteButton);
+        expect(window.fetch).toHaveBeenCalledWith('http://drupal7/api/terms/'+mockPersonToDelete.id, {"headers": {"Accept": "application/json"}, "method": "DELETE"});
+    });*/
+
+/*test('editing invokes editing api call', async ()=> {
         const personCreateComponent = <PersonCreate {...defaultProps}/>;
         const container = render(wrapWithProvider(personCreateComponent));
         const inputNodeFirstName = container.getByLabelText('First Name');
@@ -138,27 +179,8 @@ describe('PersonEdit', () => {
                     "content-type": "application/json",
                  },
                 "method": "POST",
+                "credentials": "include",
+                "mode": "cors"
             }
         );
-    });
-
-    test('deleting invokes deleting api call', async ()=> {
-        const personCreateComponent = <PersonCreate {...defaultProps}/>;
-        const container = render(<MemoryRouter>{wrapWithProvider(personCreateComponent)}</MemoryRouter>);
-        const deleteButton = container.getByText('Delete Person').closest('button');
-
-        window.fetch = jest.fn().mockImplementation((url, params) =>{
-            expect(url).toBe('http://drupal7/api/terms/'+mockPersonToDelete.id);
-        });
-
-        fireEvent.click(deleteButton);
-
-        expect(window.fetch).toHaveBeenCalledWith('http://drupal7/api/terms/'+mockPersonToDelete.id, {"headers": {"Accept": "application/json"}, "method": "DELETE"});
-
-    });
-
-    test('Person Edit snapshot', () => {
-        const container = renderer.create(<Provider
-            store={store}><PersonCreate {...defaultProps}/></Provider>).toJSON();
-        expect(container).toMatchSnapshot();
-})});
+    });   */

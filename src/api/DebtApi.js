@@ -1,6 +1,3 @@
-import AuthApi from "./AuthApi";
-
-
 export default class DebtApi {
 
     static createDebt(debt) {
@@ -47,26 +44,25 @@ export default class DebtApi {
                 ]
             }
         };
+        return fetch('http://drupal7/api/node/', {
+            method: 'POST',
+            credentials: 'include',
+            mode: 'cors',
+            headers: {
+                'content-type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(body)
+        })
+        .then(response => {
+            if(response.status ===200) {
+                return response;
+            } else throw(Error(response.statusText));
+        })
+        .catch( (error) => {
+            throw error.message;
+        })
 
-        return AuthApi.getToken()
-            .then( () => {
-                return fetch('http://drupal7/api/node/', {
-                    method: 'POST',
-                    credentials: 'include',
-                    mode: 'cors',
-                    headers: {
-                        'content-type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify(body)
-                })
-                .then(response => {
-                    return response;
-                })
-                .catch( (error) => {
-                    throw error.response.statusText;
-                })
-            })
     }
 
     static getDebts() {
@@ -78,13 +74,16 @@ export default class DebtApi {
                 'Accept': 'application/json'
             }
         })
-            .then(response => {
+        .then(response => {
+            if (response.status === 200) {
                 return response.json();
-            })
-            .catch(error => {
-                throw error.response.statusText;
-            });
+            } else throw Error(response.statusText);
+        })
+        .catch(error => {
+            throw error.message;
+        });
     }
+
 
     static deleteDebt(debt) {
         return fetch('http://drupal7/api/node/'+debt.id, {
@@ -95,7 +94,17 @@ export default class DebtApi {
                 'Accept': 'application/json'
             }
         })
-    }
+            .then(response => {
+                if (response.status === 200) {
+                    return response.json();
+                }
+                else throw Error(response.statusText);
+            })
+            .catch(error => {
+                throw error.message;
+            });
+        }
+
 
     static getSingleDebt(debtId) {
         return fetch('http://drupal7/api/debt?nid='+debtId, {
@@ -105,7 +114,16 @@ export default class DebtApi {
                 'Accept': 'application/json'
             }
         })
-            .then(response => {return response.json();})
+        .then(response => {
+            if (response.status === 200) {
+                return response.json();
+            }
+            else throw Error(response.statusText);
+        })
+        .then(response=>response[0])
+        .catch(error => {
+                throw error.message;
+            });
     }
 
     static editDebt(debt) {
@@ -153,24 +171,25 @@ export default class DebtApi {
             }
         };
 
-        return AuthApi.getToken()
-            .then( () => {
-                return fetch('http://drupal7/api/node/'+debt.id, {
-                    method: 'PUT',
-                    credentials: 'include',
-                    mode: 'cors',
-                    headers: {
-                        'content-type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify(body)
-                })
-                    .then(response => {
-                        return response;
-                    })
-                    .catch( (error) => {
-                        throw error.response.statusText;
-                    })
-            })
+        return fetch('http://drupal7/api/node/'+debt.id, {
+            method: 'PUT',
+            credentials: 'include',
+            mode: 'cors',
+            headers: {
+                'content-type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(body)
+        })
+        .then(response => {
+            if (response.status === 200) {
+                return response.json();
+            }
+            else throw Error(response.statusText);
+        })
+        .catch(error => {
+            throw error.message;
+        });
+
     }
 }

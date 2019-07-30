@@ -7,31 +7,52 @@ import {useDispatch, useSelector} from 'react-redux';
 import * as types from "../../store/sagas/persons/ActionTypes";
 import {Redirect} from "react-router-dom";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import Snackbar from "@material-ui/core/Snackbar";
+import Dialog from "@material-ui/core/Dialog";
+import Transition from "react-transition-group/Transition";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogActions from "@material-ui/core/DialogActions";
 
 const useStyles = makeStyles(theme => ({
     title: {
         fontSize: 28,
         marginTop: 20,
-        marginBottom:20,
-        marginLeft: 20
+        marginBottom:20
     },
     textField: {
         display: "block",
-        width: 400,
-        marginLeft: 20,
-        marginRight: 20,
+        width: 400
     },
     button: {
-        width: 200,
+        width: 150,
+        marginTop: 20
+    },
+    container: {
+        maxWidth:400,
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        textAlign: 'center'
+    },
+    message: {
         marginTop: 20,
-        marginLeft: 20,
-    },
-    progress: {
-        margin: theme.spacing(2),
-    },
-}));
+        position: 'relative',
+        padding: 10,
 
+    },
+    errorMessage: {
+        border: '1px solid red',
+        color: 'red'
+    },
+    successMessage: {
+        border: '1px solid green',
+        color: 'green'
+    },
+    buttonPanel: {
+        display: 'flex',
+        justifyContent: 'space-around'
+    }
+}));
 
 const PersonCreate = (props) => {
     const id =  props.match.params.id;
@@ -44,8 +65,10 @@ const PersonCreate = (props) => {
     const success = useSelector(state => state.persons.success);
     const error = useSelector(state => state.persons.error);
 
+    const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false);
     const [redirectToPersons, setRedirectToPersons] = useState(false);
-    const [snackBar, setSnackBar] = useState({opened: false, message: ""});
+    const [errorMessage, setErrorMessage] = useState({opened: false, message: ""});
+    const [successMessage, setSuccessMessage] = useState({opened: false, message: ""});
     const [person, setPerson] = useState({
         firstName:firstName,
         secondName:secondName});
@@ -62,18 +85,27 @@ const PersonCreate = (props) => {
 
     useEffect(()=>{
         dispatch({type: types.GET_PERSON_REQUEST, payload: {id: id}});
-    }, []);
+    }, [dispatch, id]);
 
-    useEffect (() => {
+    useEffect(()=>{
         if (error) {
-            setSnackBar({opened: true, message: error.message});
+            setErrorMessage({opened: true, message: error});
+        } else {
+            setErrorMessage({opened: false, message: ''});
         }
-        else if (success && isExistingPerson) {
-            setSnackBar({opened: true, message: "Edit successfully!"});
+    }, [error, dispatch]);
+
+    useEffect(()=>{
+        if (success && isExistingPerson) {
+            setSuccessMessage({opened: true, message: "Edit successfully!"});
         } else if (success && !isExistingPerson) {
             setRedirectToPersons(true);
+            dispatch({type: types.RESET_SUCCESS});
+        } else {
+            setSuccessMessage({opened: false, message: ""});
         }
-    }, [success, error]);
+
+    }, [success, dispatch, isExistingPerson]);
 
     useEffect(() => {
         setPerson({firstName: firstName, secondName:secondName});
@@ -90,19 +122,24 @@ const PersonCreate = (props) => {
         let secondNameField = {};
         let error = false;
 
-        if (person.firstName==='' || person.firstName===undefined){
-            firstNameField = {errorStatus:true, message: 'This field is required'};
-            error = true;
-        } else {
-            firstNameField = {errorStatus:false, message: 'First Name'};
+        const personFirstNameBlank = person.firstName==='' || person.firstName===undefined;
+        const personSecondNameBlank = person.secondName==='' || person.secondName===undefined;
+
+        if (personFirstNameBlank && personSecondNameBlank) {
+            if (personFirstNameBlank) {
+                firstNameField = {errorStatus: true, message: 'This field is required'};
+                error = true;
+            } else {
+                firstNameField = {errorStatus: false, message: 'First Name'};
+            }
+            if (personSecondNameBlank) {
+                secondNameField = {errorStatus: true, message: 'This field is required'};
+                error = true;
+            } else {
+                secondNameField = {errorStatus: false, message: 'First Name'};
+            }
         }
 
-        if (person.secondName==='' || person.secondName===undefined){
-            error = true;
-            secondNameField = {errorStatus:true, message: 'This field is required'};
-        } else {
-            secondNameField = {errorStatus:false, message: 'Second Name'};
-        }
 
         setFormMessages({firstNameField: firstNameField, secondNameField: secondNameField});
         if (!error) {
@@ -121,15 +158,17 @@ const PersonCreate = (props) => {
         }
     };
 
-    const handleDelete = () => {
-        dispatch({type: types.DELETE_PERSON_REQUEST, payload: {id: id}});
-        setRedirectToPersons(true);
+    const handleDeleteDialogOpen = () => {
+        setOpenDeleteDialog(true);
     };
 
-    const handleSnackBarClose = () => {
-        setSnackBar({opened: false, message: ""});
-        dispatch({type: types.RESET_SUCCESS});
-        dispatch({type: types.RESET_ERROR});
+    const handleDeleteDialogClose = () => {
+        setOpenDeleteDialog(false);
+    };
+
+    const handleDeletePerson = () => {
+        dispatch({type: types.DELETE_PERSON_REQUEST, payload: {id: id}});
+        setRedirectToPersons(true);
     };
 
     const classes = useStyles();
@@ -164,6 +203,7 @@ const PersonCreate = (props) => {
                 onChange={handleChange}
                 fullWidth
             />
+            <div className={classes.buttonPanel}>
             <Button
                 type="submit"
                 variant="contained"
@@ -172,17 +212,34 @@ const PersonCreate = (props) => {
                 className={classes.button}>
                 {isExistingPerson ? "Edit" : "Create"}
             </Button>
-            {isExistingPerson ? <Button variant="contained" size="medium" color="primary" onClick={handleDelete} className={classes.button}> Delete Person </Button> : ''}
-            <Snackbar
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                }}
-                open={snackBar.opened}
-                autoHideDuration={error ? 5000 : 1000}
-                onClose={handleSnackBarClose}
-                message={snackBar.message}
-            />
+            {isExistingPerson ? <Button variant="contained" size="medium" color="primary" onClick={handleDeleteDialogOpen} className={classes.button}> Delete </Button> : ''}
+            </div>
+            {errorMessage.opened? <div className={classes.errorMessage+' '+classes.message}>{errorMessage.message}</div> : ''}
+            {successMessage.opened? <div className={classes.successMessage+' '+classes.message}>{successMessage.message}</div> : ''}
+
+            <Dialog
+                open={openDeleteDialog}
+                TransitionComponent={Transition}
+                keepMounted
+                onClose={handleDeleteDialogClose}
+                aria-labelledby="alert-dialog-slide-title"
+                aria-describedby="alert-dialog-slide-description"
+            >
+                <DialogTitle id="alert-dialog-slide-title">{"Delete person?"}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-slide-description">
+                       Are you sure you want to delete this person?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleDeleteDialogClose} color="primary">
+                        Disagree
+                    </Button>
+                    <Button onClick={handleDeletePerson} color="primary">
+                        Agree
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </form>
     )
 };

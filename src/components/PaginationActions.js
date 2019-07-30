@@ -6,7 +6,7 @@ import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
 
-const useStyles1 = makeStyles(theme => ({
+const useStyles = makeStyles(theme => ({
     root: {
         flexShrink: 0,
         color: theme.palette.text.secondary,
@@ -15,7 +15,7 @@ const useStyles1 = makeStyles(theme => ({
 }));
 
 export function PaginationActions(props) {
-    const classes = useStyles1();
+    const classes = useStyles();
     const theme = useTheme();
     const { count, page, rowsPerPage, onChangePage } = props;
 

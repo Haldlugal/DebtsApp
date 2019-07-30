@@ -1,9 +1,11 @@
 import * as types from '../sagas/persons/ActionTypes';
 
 const initState = {
+    creating: false,
     error: null,
     persons: [
-    ]
+    ],
+    fetching: false
 };
 
 const personReducer = (state = initState, action) => {
@@ -23,9 +25,11 @@ const personReducer = (state = initState, action) => {
             return {...state, fetching: false, firstName: "", secondName: ""};
 
         case types.CREATE_PERSON_SUCCESS:
-            return {...state, success: true};
+            return {...state, success: true, creating: false};
         case types.CREATE_PERSON_FAILURE:
             return {...state, success: false, error: action.error};
+        case types.CREATE_PERSON_PROGRESS:
+            return {...state, creating: true};
 
         case types.EDIT_PERSON_REQUEST:
             return {...state, firstName: action.payload.firstName, secondName: action.payload.secondName};

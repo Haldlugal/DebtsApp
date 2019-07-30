@@ -1,22 +1,7 @@
 class PersonApi {
 
-    static fetchAllPersons() {
-        return fetch('http://drupal7/api/persons_api', {
-            method: 'GET',
-            mode: 'cors',
-            credentials: 'include',
-            headers: {
-                'Accept': 'application/json'
-            }
-        })
-            .then(response => {
-                return response.json();
-            });
-    }
-
-
     static fetchPersons() {
-        return fetch('http://drupal7/api/persons_api', {
+        return fetch('http://drupal7/api/persons_api/', {
             method: 'GET',
             mode: 'cors',
             credentials: 'include',
@@ -25,7 +10,12 @@ class PersonApi {
             }
         })
         .then(response => {
-            return response.json();
+            if (response.status === 200) {
+                return response.json();
+            } else throw Error(response.statusText);
+        })
+        .catch(error=> {
+            throw error.message;
         });
     }
 
@@ -38,11 +28,18 @@ class PersonApi {
                 'Accept': 'application/json'
             }
         })
-        .then(response => {return response.json();})
+        .then(response => {
+            if (response.status === 200) {
+                return response.json();
+            } else throw Error(response.statusText);
+        })
         .then(result => {return {
             firstName: result.field_persons_first_name.und[0].value,
             secondName: result.field_persons_second_name.und[0].value
-        }});
+        }})
+        .catch(error=> {
+            throw error.message;
+        });
     }
 
     static editPerson(person) {
@@ -74,6 +71,14 @@ class PersonApi {
                 'Accept': 'application/json'
                 },
             body: JSON.stringify(body)
+            })
+            .then(response => {
+                if (response.status === 200) {
+                    return response.json();
+                } else throw Error(response.statusText);
+            })
+            .catch(error=> {
+                throw error.message;
             });
     }
 
@@ -116,6 +121,8 @@ class PersonApi {
         }).then((response)=>{
             if (response.status!==200){
                 throw Error(response.statusText);
+            } else {
+                return response.json();
             }
         }).catch(error=> {
             throw error;
@@ -131,6 +138,14 @@ class PersonApi {
                 'Accept': 'application/json'
             }
         })
+        .then(response => {
+            if (response.status === 200) {
+                return response.json();
+            } else throw Error(response.statusText);
+        })
+        .catch(error=> {
+            throw error.message;
+        });
     }
 }
 
