@@ -34,7 +34,8 @@
     "redux-saga": "^1.0.5",
     "redux-thunk": "^2.3.0",
     "regenerator-runtime": "^0.13.2",
-    "q": "latest"
+    "q": "latest",
+    "react-transition-group": "latest"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -186,7 +186,7 @@ const PersonCreate = (props) => {
                 error={formMessages.firstNameField.errorStatus}
                 className={classes.textField}
                 margin="normal"
-                variant="outlined"
+                variant="standard"
                 value={person.firstName}
                 onChange={handleChange}
                 fullWidth
@@ -198,7 +198,7 @@ const PersonCreate = (props) => {
                 error={formMessages.secondNameField.errorStatus}
                 className={classes.textField}
                 margin="normal"
-                variant="outlined"
+                variant="standard"
                 value={person.secondName}
                 onChange={handleChange}
                 fullWidth

@@ -41,6 +41,11 @@ const personReducer = (state = initState, action) => {
         case types.DELETE_PERSON_SUCCESS:
             return state;
 
+        case types.LAST_PERSON_CREATED:
+            return {...state, lastPersonCreatedId: action.personCreatedId};
+        case types.CREATE_PERSON_RESET:
+            return {...state, lastPersonCreatedId: null};
+
         case types.RESET_SUCCESS:
             return {...state, success: false};
         case types.RESET_ERROR:

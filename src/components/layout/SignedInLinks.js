@@ -32,7 +32,7 @@ const SignedInLinks = () => {
 
             <ListItemText inset>
                 <TypoGraphy color="inherit" variant="subtitle1">
-                    <NavLink className={classes.headerNavLink} activeClassName={classes.headerNavLinkActive} to="/debts">Debts</NavLink>
+                    <NavLink className={classes.headerNavLink} activeClassName={classes.headerNavLinkActive} to="/debts/">Debts</NavLink>
                 </TypoGraphy>
             </ListItemText>
 

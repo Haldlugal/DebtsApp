@@ -10,17 +10,22 @@ import moment from "moment";
 import * as types from "../../../store/sagas/debts/ActionTypes";
 
 const mockStore = configureMockStore();
-const store = mockStore({debts: {
-    persons: [{
-        tid: 1,
-        first_name: "Frodo",
-        second_name: "Baggins"
-    },
-    {
-        tid: 2,
-        first_name: "Saruman",
-        second_name: "TheWhite"
-    }]}});
+const store = mockStore({
+        persons: {
+            creating: false,
+        },
+        debts: {
+            persons: [{
+                tid: 1,
+                first_name: "Frodo",
+                second_name: "Baggins"
+            },
+            {
+                tid: 2,
+                first_name: "Saruman",
+                second_name: "TheWhite"
+            }]}},
+    );
 
 const defaultProps = {
     match: { params: { id: undefined } }
@@ -28,7 +33,7 @@ const defaultProps = {
 
 const mockDebt = {
     amount: '200',
-    person: '1',
+    person: 'Frodo Baggins',
     currency: 'USD',
     dateCreated: moment().format('MM/DD/YYYY'),
     dateExpires: moment().format('MM/DD/YYYY')
@@ -39,18 +44,23 @@ beforeEach(()=>{
 describe('DebtCreate', () => {
 
     test('successful create redirects to /debts', async () => {
-        const store = mockStore({debts: {
-                success: true,
-                persons: [{
-                    tid: 1,
-                    first_name: "Frodo",
-                    second_name: "Baggins"
-                },
-                {
-                    tid: 2,
-                    first_name: "Saruman",
-                    second_name: "TheWhite"
-                }]}});
+        const store = mockStore({
+                debts: {
+                    success: true,
+                    persons: [{
+                        tid: 1,
+                        first_name: "Frodo",
+                        second_name: "Baggins"
+                    },
+                    {
+                        tid: 2,
+                        first_name: "Saruman",
+                        second_name: "TheWhite"
+                    }]},
+                persons: {
+                    creating: false,
+                }},
+                );
         const Container = () => <Provider store={store}><DebtCreate {...defaultProps}/></Provider>;
         const FakeDebts = () => <div data-testid="fakeDebts"/>;
         const {getByTestId} = render(
@@ -64,17 +74,21 @@ describe('DebtCreate', () => {
         await waitForElement(() => getByTestId("fakeDebts"));
     });
 
-    test ('pressing create button dispatches CREATE_DEBT_REQUEST', () =>{
+    test ('pressing create button dispatches CREATE_DEBT_REQUEST', async () =>{
         const container = render(<Provider store={store}><DebtCreate {...defaultProps}/></Provider>);
         store.clearActions();
         const createButton = container.getByText('Create').closest('button');
         const inputAmount = container.getByLabelText('Amount');
-        const inputPerson = container.getByLabelText('Person');
-        const inputCurrency = container.getByLabelText('Currency');
+
+        let inputPerson;
+        let inputCurrency;
+        await waitForElement(() => inputPerson = document.getElementById('react-select-3-input'));
+        await waitForElement(() => inputCurrency = document.getElementById('react-select-2-input'));
 
         fireEvent.change(inputAmount, {target: {value: mockDebt.amount}});
         fireEvent.change(inputPerson, {target: {value: mockDebt.person}});
         fireEvent.change(inputCurrency, {target: {value: mockDebt.currency}});
+        console.log(inputCurrency);
 
         fireEvent.click(createButton);
         expect(store.getActions()).toEqual([{

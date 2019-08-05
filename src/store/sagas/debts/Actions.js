@@ -6,9 +6,11 @@ import {currencies} from "../../../helpers/Currencies";
 import AuthApi from "../../../api/AuthApi";
 import {delay} from "q";
 
-export function* getAllPersons() {
+export function* getAllPersons(action) {
     try {
-        yield put ({ type: types.FETCHING});
+        if (!action.from_add_person){
+            yield put ({ type: types.FETCHING});
+        }
         const response = yield call(personApi.fetchPersons);
         yield put({ type: types.GET_ALL_PERSONS_SUCCESS, persons: response });
         yield put ({ type: types.FETCHING_RESET});
@@ -97,8 +99,4 @@ export function* getStatistics() {
     } catch (error) {
         yield put({type: types.FAILURE, error});
     }
-}
-
-function sortDebts(debts) {
-
 }

@@ -4,7 +4,6 @@ import Button from "@material-ui/core/Button";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import {useDispatch, useSelector} from "react-redux";
 import * as types from "../../store/sagas/auth/ActionTypes";
-import {red} from "@material-ui/core/colors";
 
 const useStyles = makeStyles(theme => ({
     title: {
@@ -178,7 +177,7 @@ const SignUpForm = () => {
                 error={formMessages.loginField.errorStatus}
                 className={classes.textField}
                 margin="normal"
-                variant="outlined"
+                variant="standard"
                 onChange={handleChange}
                 fullWidth
             />
@@ -188,7 +187,7 @@ const SignUpForm = () => {
                 error={formMessages.passwordField.errorStatus}
                 className={classes.textField}
                 margin="normal"
-                variant="outlined"
+                variant="standard"
                 type="password"
                 onChange={handleChange}
                 fullWidth
@@ -199,7 +198,7 @@ const SignUpForm = () => {
                 error={formMessages.repeatPasswordField.errorStatus}
                 className={classes.textField}
                 margin="normal"
-                variant="outlined"
+                variant="standard"
                 type="password"
                 onChange={handleChange}
                 fullWidth
@@ -213,7 +212,7 @@ const SignUpForm = () => {
                 name="email"
                 autoComplete="email"
                 margin="normal"
-                variant="outlined"
+                variant="standard"
                 onChange={handleChange}
                 fullWidth
             />
@@ -223,7 +222,7 @@ const SignUpForm = () => {
                 error={formMessages.firstNameField.errorStatus}
                 className={classes.textField}
                 margin="normal"
-                variant="outlined"
+                variant="standard"
                 onChange={handleChange}
                 fullWidth
             />

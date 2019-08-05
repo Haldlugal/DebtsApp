@@ -55,7 +55,7 @@ const DebtCard = (props) => {
                             </Grid>
                         </Grid>
                         <Grid item className={classes.money}>
-                            <Typography variant="subtitle1"><span>{props.debt.Currency+" "}</span>{props.debt.Debt}</Typography>
+                            <Typography variant="subtitle1"><span>{props.debt.Currency+" "}</span>{Math.abs(props.debt.Debt)}</Typography>
                         </Grid>
                     </Grid>
                 </Grid>

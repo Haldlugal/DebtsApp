@@ -124,7 +124,9 @@ class PersonApi {
             } else {
                 return response.json();
             }
-        }).catch(error=> {
+        }).then(response=>response)
+
+        .catch(error=> {
             throw error;
         });
     }

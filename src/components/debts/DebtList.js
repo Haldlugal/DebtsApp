@@ -2,7 +2,7 @@ import React, {Fragment, useEffect, useState} from 'react';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import Button from "@material-ui/core/Button";
 import Toolbar from "@material-ui/core/Toolbar";
-import {NavLink} from 'react-router-dom';
+import {NavLink, Redirect} from 'react-router-dom';
 import DebtCard from './DebtCard';
 import {useDispatch, useSelector} from "react-redux";
 import * as types from "../../store/sagas/debts/ActionTypes";
@@ -24,7 +24,20 @@ const useStyles = makeStyles(theme => ({
         flexGrow: 1,
     },
     navLink: {
-        textDecoration: "none"
+        textDecoration: "none",
+        marginRight: 20,
+        padding: 10,
+        textTransform:'uppercase',
+        color: 'black'
+    },
+    navLinkActive:{
+        textDecoration: 'none',
+        backgroundColor: '#6F80DA',
+        borderRadius: 5,
+        color: 'white',
+        '&:hover': {
+            backgroundColor: '#6F80DA',
+        },
     },
     progress: {
         margin: theme.spacing(4),
@@ -43,7 +56,7 @@ const useStyles = makeStyles(theme => ({
             backgroundColor: fade(theme.palette.common.white, 0.25),
         },
         marginLeft: 'auto',
-        width: 200,
+        width: 300,
     },
     searchIcon: {
         width: theme.spacing(7),
@@ -65,25 +78,42 @@ const useStyles = makeStyles(theme => ({
             width: 200,
         },
     },
+    option: {
+        padding: 10,
+        cursor: 'pointer',
+        "&:hover": {
+            backgroundColor: 'rgba(10,10,10, 0.1)',
+        }
+    },
     sortForm: {
+        width: 150,
         height: 37,
         bottom: 14,
         marginLeft: 15
     },
     sortOrderForm: {
+        width: 150,
+        height: 37,
+        bottom: 14,
         marginLeft: 15
+    },
+    hidden: {
+        display: 'none'
     }
 }));
 
-const DebtList = () => {
+const DebtList = (props) => {
 
+    const personId = props.match.params.personId?props.match.params.personId:0;
     const dispatch = useDispatch();
     const fetching = useSelector(state=> state.debts.fetching);
-    const debts = useSelector(state=>state.debts.debts);
+    let debts = useSelector(state=>state.debts.debts);
+
     const [page, setPage] = useState(0);
     const [search, setSearch] = useState('');
-    const [sort, setSort] = useState('');
+    const [sort, setSort] = useState('name');
     const [sortOrder, setSortOrder] = useState('desc');
+    const [ownership, setOwnership] = useState('my');
 
     useEffect( () => {
         dispatch({type: types.GET_DEBTS_REQUEST});
@@ -105,6 +135,10 @@ const DebtList = () => {
 
     function handleSortOrderChange(event) {
         setSortOrder(event.target.value);
+    }
+
+    function changeOwnership(event) {
+        setOwnership(event);
     }
 
     function sortDebts(debts, sortType, sortOrder) {
@@ -140,7 +174,20 @@ const DebtList = () => {
             return debts;
         }
     }
-    const debtsToShow = debts? debts.filter((debt)=>debt.Name.toLowerCase().includes(search)): [];
+    if (ownership === undefined) {
+        return <Redirect to="/debtsList/my"/>
+    } else if (ownership === 'my') {
+        debts = debts? debts.filter((debt)=>debt.Debt > 0): [];
+    } else {
+        debts = debts? debts.filter((debt)=>debt.Debt < 0): [];
+    }
+    if (personId!==0) {
+        debts = debts? debts.filter((debt)=>debt.Person===personId): [];
+    }
+    const debtsToShow = debts? debts.filter((debt)=>debt.Name?debt.Name.toLowerCase().includes(search):false): [];
+
+
+
     if (fetching) return (<CircularProgress className={classes.progress} root={classes.progress}/>)
     else return (
         <Fragment>
@@ -150,6 +197,14 @@ const DebtList = () => {
                         Create Debt
                     </Button>
                 </NavLink>
+                <Button href={''} onClick={()=>changeOwnership('my')} className={ownership==='my'? classes.navLink+" "+classes.navLinkActive: classes.navLink}>
+                    I am owed
+                </Button>
+                <Button href={''} onClick={()=>changeOwnership('their')} className={ownership==='their'? classes.navLink+" "+classes.navLinkActive: classes.navLink}>
+                    I owe
+                </Button>
+
+
                 <div className={classes.search}>
                     <div className={classes.searchIcon}>
                         <SearchIcon />
@@ -167,24 +222,25 @@ const DebtList = () => {
                 <FormControl className={classes.formControl+' '+classes.sortForm}>
                     <InputLabel htmlFor="sort">Sort By</InputLabel>
                     <Select
-                        native
+                        value={sort}
                         onChange={handleSortChange}
                         name="sort"
                         inputProps={{
                             id: 'sort',
                         }}
                     >
-                        <option value="" />
-                        <option value={'name'}>Name</option>
-                        <option value={'currency'}>Currency</option>
-                        <option value={'amount'}>Amount</option>
-                        <option value={'deadline'}>Deadline</option>
-                        <option value={'dateTaken'}>Date Taken</option>
+
+                        <option className={classes.option} value={'name'}>Name</option>
+                        <option className={classes.option} value={'currency'}>Currency</option>
+                        <option className={classes.option} value={'amount'}>Amount</option>
+                        <option className={classes.option} value={'deadline'}>Deadline</option>
+                        <option className={classes.option} value={'dateTaken'}>Date Taken</option>
                     </Select>
                 </FormControl>
                 <FormControl className={classes.formControl+' '+classes.sortOrderForm}>
+                    <InputLabel htmlFor="sortOrder">Order By</InputLabel>
                     <Select
-                        native
+                        value={sortOrder}
                         onChange={handleSortOrderChange}
                         name="sortOrder"
                         inputProps={{
@@ -192,8 +248,8 @@ const DebtList = () => {
                             'aria-label': 'sortOrder'
                         }}
                     >
-                        <option value={'desc'}>DESC</option>
-                        <option value={'asc'}>ASC</option>
+                        <option className={classes.option} value={'desc'}>DESC</option>
+                        <option className={classes.option} value={'asc'}>ASC</option>
                     </Select>
                 </FormControl>
             </Toolbar>
@@ -218,6 +274,7 @@ const DebtList = () => {
                                 inputProps: { 'aria-label': 'Rows per page' },
                                 native: true,
                             }}
+                            className={debtsToShow.length<=5?classes.hidden:''}
                             onChangePage={handleChangePage}
                             ActionsComponent={PaginationActions}
                         />

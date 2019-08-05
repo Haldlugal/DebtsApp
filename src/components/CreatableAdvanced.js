@@ -1,22 +1,21 @@
 import React, { Component } from 'react';
 import CreatableSelect from 'react-select/creatable';
+import Typography from "@material-ui/core/Typography";
 
-const createOption = (label) => ({
-    label,
-    value: label.toLowerCase().replace(/\W/g, ''),
-});
 
+const colourStyles = {
+    control: styles => ({...styles, backgroundColor: 'white', border: 'none', borderBottom: '1px solid rgba(0, 0, 0, 0.42)'}),
+    input: styles => ({ ...styles}),
+    placeholder: (styles) => ({...styles})
+};
 
 export default class CreatableAdvanced extends Component {
-    state = {
-        isLoading: false,
-        value: undefined
-    };
-
     render() {
-        console.log(this.props.value);
         return (
             <CreatableSelect
+                classNamePrefix="react_select"
+                styles={colourStyles}
+                title={'test'}
                 isClearable
                 isDisabled={this.props.isLoading}
                 isLoading={this.props.isLoading}
@@ -24,8 +23,8 @@ export default class CreatableAdvanced extends Component {
                 onCreateOption={this.props.handleCreate}
                 options={this.props.options}
                 inputProps = {this.props.inputProps}
-                defaultValue={this.props.defaultValue}
                 value={this.props.value}
+                placeholder={this.props.error?<Typography color="error">{this.props.placeholder}</Typography>:this.props.placeholder}
             />
         );
     }

@@ -4,9 +4,6 @@ import Button from "@material-ui/core/Button";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import {useDispatch, useSelector} from "react-redux";
 import * as types from "../../store/sagas/auth/ActionTypes";
-import Snackbar from "@material-ui/core/Snackbar";
-import {red} from "@material-ui/core/colors";
-
 
 const useStyles = makeStyles(theme => ({
     container: {
@@ -111,7 +108,7 @@ const SignInForm =() => {
                 label={formMessages.nameField.message}
                 error={formMessages.nameField.errorStatus}
                 margin="normal"
-                variant="outlined"
+                variant="standard"
                 onChange={handleChange}
                 fullWidth
 
@@ -122,7 +119,7 @@ const SignInForm =() => {
                 label={formMessages.passwordField.message}
                 error={formMessages.passwordField.errorStatus}
                 margin="normal"
-                variant="outlined"
+                variant="standard"
                 onChange={handleChange}
                 fullWidth
             />

@@ -20,6 +20,7 @@ const AppRouter = () => {
             <PrivateRouter exact path="/persons/create" component={PersonCreate}/>
             <PrivateRouter exact path="/persons/edit/:id" component={PersonCreate}/>
             <PrivateRouter exact path="/debts" component={DebtList}/>
+            <PrivateRouter exact path="/debts/personal/:personId" component={DebtList}/>
             <PrivateRouter exact path="/debts/create" component={DebtCreate}/>
             <PrivateRouter exact path="/debts/edit/:id" component={DebtCreate}/>
             <PrivateRouter exact path="/logout" component={Logout}/>

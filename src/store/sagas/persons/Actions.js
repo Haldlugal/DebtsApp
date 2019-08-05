@@ -56,8 +56,11 @@ export function* addPerson(action) {
     try {
         yield put({type: types.CREATE_PERSON_PROGRESS});
         action.payload.author_id = yield call(authApi.getUserLoggedIn);
-        yield call(personApi.addPerson, action.payload);
-        yield put({type: debtTypes.GET_ALL_PERSONS_REQUEST});
+        const personCreatedId = yield call(personApi.addPerson, action.payload);
+        if (action.payload.fromDebt) {
+            yield put({type: types.LAST_PERSON_CREATED, personCreatedId: personCreatedId[0]});
+        }
+        yield put({type: debtTypes.GET_ALL_PERSONS_REQUEST, from_add_person: true});
         yield put({type: types.CREATE_PERSON_SUCCESS});
     } catch (error) {
         yield put({type: types.CREATE_PERSON_FAILURE, error});
@@ -68,6 +71,12 @@ export function* addPerson(action) {
 
 export function* deletePerson(action) {
     try {
+        let debts = yield call(debtApi.getDebts);
+        debts = debts.filter((debt)=> {
+            return debt.Person===action.payload.id});
+        for (let i = 0; i < debts.length; i++) {
+            yield call(debtApi.deleteDebt, {id: debts[i].Nid});
+        }
         yield call(personApi.deletePerson, action.payload);
         yield put({type: types.DELETE_PERSON_SUCCESS});
         yield call(getPersonsWithDebts);

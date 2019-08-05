@@ -36,7 +36,7 @@ const useStyles = makeStyles(theme => ({
             backgroundColor: fade(theme.palette.common.white, 0.25),
         },
         marginLeft: 'auto',
-        width: 200,
+        width: 300,
     },
     searchIcon: {
         width: theme.spacing(7),
@@ -58,13 +58,25 @@ const useStyles = makeStyles(theme => ({
             width: 200,
         },
     },
+    option: {
+        padding: 10,
+        cursor: 'pointer',
+        "&:hover": {
+            backgroundColor: 'rgba(10,10,10, 0.1)',
+        }
+    },
     sortForm: {
+        width: 150,
         height: 37,
         bottom: 14,
         marginLeft: 15
     },
     sortOrderForm: {
+        width: 150,
+        height: 37,
+        bottom: 14,
         marginLeft: 15
+
     },
     error: {
         marginLeft: 40,
@@ -80,6 +92,9 @@ const useStyles = makeStyles(theme => ({
         top: '40%',
         marginRight: 20
     },
+    hidden:{
+        display: 'none'
+    }
 }));
 
 const PersonList = () => {
@@ -90,7 +105,7 @@ const PersonList = () => {
     const error = useSelector(state=> state.persons.error);
     const [page, setPage] = useState(0);
     const [search, setSearch] = useState('');
-    const [sort, setSort] = useState('');
+    const [sort, setSort] = useState('name');
     const [sortOrder, setSortOrder] = useState('desc');
 
     useEffect(()=>{
@@ -172,23 +187,23 @@ const PersonList = () => {
                 <FormControl className={classes.formControl+' '+classes.sortForm}>
                     <InputLabel htmlFor="sort">Sort By</InputLabel>
                     <Select
-                        native
+                        value={sort}
                         onChange={handleSortChange}
                         name="sort"
                         inputProps={{
                             'id': 'sort'
                         }}
                     >
-                        <option value="" />
-                        <option value={'name'}>Name</option>
-                        <option value={'rubDebt'}>Debt in rub</option>
-                        <option value={'eurDebt'}>Debt in eur</option>
-                        <option value={'usdDebt'}>Debt in usd</option>
+                        <option className={classes.option} value={'name'}>Name</option>
+                        <option className={classes.option} value={'rubDebt'}>Debt in rub</option>
+                        <option className={classes.option} value={'eurDebt'}>Debt in eur</option>
+                        <option className={classes.option} value={'usdDebt'}>Debt in usd</option>
                     </Select>
                 </FormControl>
                 <FormControl className={classes.formControl+' '+classes.sortOrderForm}>
+                    <InputLabel htmlFor="sortOrder">Order By</InputLabel>
                     <Select
-                        native
+                        value={sortOrder}
                         onChange={handleSortOrderChange}
                         name="sortOrder"
                         inputProps={{
@@ -196,14 +211,14 @@ const PersonList = () => {
                             'aria-label': 'sortOrder'
                         }}
                     >
-                        <option value={'desc'}>DESC</option>
-                        <option value={'asc'}>ASC</option>
+                        <option className={classes.option} value={'desc'}>DESC</option>
+                        <option className={classes.option} value={'asc'}>ASC</option>
                     </Select>
                 </FormControl>
             </Toolbar>
             <div className={classes.root}> {
                 personsToShow && sortPersons(personsToShow, sort, sortOrder)
-                    .slice(page * 5, page * 5 + 5).map(person =>{
+                    .slice(page * 4, page * 4 + 4).map(person =>{
                         return <PersonCard person={person} key={person.tid}/>
                     })
                 }
@@ -212,14 +227,15 @@ const PersonList = () => {
                     <TableFooter>
                         <TableRow>
                             <TablePagination
-                                rowsPerPageOptions={[5]}
+                                rowsPerPageOptions={[4]}
                                 count={personsToShow.length}
-                                rowsPerPage={5}
+                                rowsPerPage={4}
                                 page={page}
                                 SelectProps={{
                                     inputProps: { 'aria-label': 'Rows per page' },
                                     native: true,
                                 }}
+                                className={personsToShow.length<=4?classes.hidden:''}
                                 onChangePage={handleChangePage}
                                 ActionsComponent={PaginationActions}
                             />
